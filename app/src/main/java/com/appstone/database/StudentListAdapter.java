@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,10 +23,15 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
 
     private Context context;
     private ArrayList<Student> students;
+    private StudentListClickListener listener;
 
     public StudentListAdapter(Context context, ArrayList<Student> students) {
         this.context = context;
         this.students = students;
+    }
+
+    public void setListener(StudentListClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -39,7 +45,7 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull StudentListHolder holder, int position) {
-        Student currentStudent = students.get(position);
+        final Student currentStudent = students.get(position);
 
         holder.mTvRegNo.setText(String.valueOf(currentStudent.regNo));
         holder.mTvStudentName.setText(currentStudent.studentName);
@@ -47,6 +53,25 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         holder.mTvBookBorrowed.setText(currentStudent.bookborrowed);
         holder.mTvIssueDate.setText(currentStudent.issueDate);
         holder.mTvReturnDate.setText(currentStudent.returnDate);
+
+
+        holder.mRlEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
+                    listener.onEditClicked(currentStudent);
+                }
+            }
+        });
+
+        holder.mRlDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listener != null) {
+                    listener.onDeleteClicked(currentStudent);
+                }
+            }
+        });
 
     }
 
@@ -64,6 +89,9 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
         private TextView mTvIssueDate;
         private TextView mTvReturnDate;
 
+        private RelativeLayout mRlEdit;
+        private RelativeLayout mRlDelete;
+
         public StudentListHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -74,7 +102,16 @@ public class StudentListAdapter extends RecyclerView.Adapter<StudentListAdapter.
             mTvBookBorrowed = itemView.findViewById(R.id.tv_book_borrowed);
             mTvIssueDate = itemView.findViewById(R.id.tv_issue_date);
             mTvReturnDate = itemView.findViewById(R.id.tv_return_date);
+
+            mRlEdit = itemView.findViewById(R.id.rl_edit);
+            mRlDelete = itemView.findViewById(R.id.rl_delete);
         }
+    }
+
+    public interface StudentListClickListener {
+        void onEditClicked(Student student);
+
+        void onDeleteClicked(Student student);
     }
 
 }

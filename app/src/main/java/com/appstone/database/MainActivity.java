@@ -2,6 +2,7 @@ package com.appstone.database;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -43,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
+        Bundle data = getIntent().getExtras();
+
+        final boolean isEdit = data.getBoolean("IS_EDIT");
+        Student editStudentValue = (Student) data.getSerializable("STUDENT");
+
 
         mBtnEnterData.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,14 +72,22 @@ public class MainActivity extends AppCompatActivity {
                 studentDetails.issueDate = issueDate;
                 studentDetails.returnDate = returnDate;
 
-                dbHelper.insertDataToDatabase(studentDetails, dbHelper.getWritableDatabase());
-
                 mEtRegNo.setText("");
                 mEtStudentName.setText("");
                 mEtStudentBranch.setText("");
                 mEtBookBorrowed.setText("");
                 mEtIssueDate.setText("");
                 mEtReturnDate.setText("");
+
+                if (!isEdit) {
+                    dbHelper.insertDataToDatabase(studentDetails, dbHelper.getWritableDatabase());
+                } else {
+                    dbHelper.updateDataToDatabase(studentDetails, dbHelper.getWritableDatabase());
+                    setResult(Activity.RESULT_OK);
+                    finish();
+                }
+
+
             }
         });
 
@@ -84,5 +98,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, StudentListActivity.class));
             }
         });
+
+
+        if (isEdit) {
+            mEtRegNo.setText(String.valueOf(editStudentValue.regNo));
+            mEtStudentName.setText(editStudentValue.studentName);
+            mEtStudentBranch.setText(editStudentValue.studentBranch);
+            mEtBookBorrowed.setText(editStudentValue.bookborrowed);
+            mEtIssueDate.setText(editStudentValue.issueDate);
+            mEtReturnDate.setText(editStudentValue.returnDate);
+
+            mEtRegNo.setEnabled(false);
+
+            mBtnEnterData.setText("Update");
+        }
     }
+
 }

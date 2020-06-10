@@ -1,6 +1,8 @@
 package com.appstone.database;
 
-public class Student {
+import java.io.Serializable;
+
+public class Student implements Serializable {
 
     public int regNo;
     public String studentName;

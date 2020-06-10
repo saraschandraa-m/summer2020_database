@@ -43,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldversion, int newversion) {
 
     }
 
@@ -57,6 +57,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_RETURN_DATE, student.returnDate);
 
         database.insert(TABLE_NAME, null, cv);
+    }
+
+    public void updateDataToDatabase(Student student, SQLiteDatabase database) {
+        ContentValues cv = new ContentValues();
+        cv.put(COL_STUDENT_NAME, student.studentName);
+        cv.put(COL_STUDENT_BRANCH, student.studentBranch);
+        cv.put(COL_ISSUE_DATE, student.issueDate);
+        cv.put(COL_BOOK_BORROWED, student.bookborrowed);
+        cv.put(COL_RETURN_DATE, student.returnDate);
+
+        database.update(TABLE_NAME, cv, COL_REG_NO + " = " + student.regNo, null);
     }
 
     public ArrayList<Student> getDataFromDatabase(SQLiteDatabase database) {
@@ -85,4 +96,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return studentList;
     }
+
+    public void deleteDataFromDatabase(Student student, SQLiteDatabase database) {
+        database.delete(TABLE_NAME, COL_REG_NO + " = " + student.regNo, null);
+    }
+
+
 }
